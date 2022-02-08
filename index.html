@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Digit Recognizer</title>
+    <link rel="shortcut icon" type="image/x-icon" href="res/favicon.svg" />
+    <link rel="stylesheet" href="styles/index.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&display=swap" rel="stylesheet"> 
+</head>
+<body>
+
+<header>
+    <div class="main_frame">
+        <h1>Digit Recognizer</h1>
+    </div>
+</header>
+
+<main>
+    <div class="main_frame">
+        <div id="draw">
+            <canvas id="canvas" width="200" height="200"></canvas>
+            <div id="result">8</div>
+        </div>
+        <input id="clear" type="button" value="Clear">
+        <p id="info">Write a digit on the above box. The Neural Network will try to identify the digit and will be shown it in green below. If the answer is wrong, press the button with the right answer to teach the Network so that it gets better eventually.</p>
+    </div>
+</main>
+
+<footer>
+    <div class="main_frame">
+        <span id="copyright"></span>
+    </div>
+</footer>
+
+<script>
+    (function() {
+        const copyright = document.getElementById('copyright');
+
+        fetch('https://manusoman.github.io/MindLogs/settings.json')
+        .then(res => res.json())
+        .then(data => { copyright.innerHTML = `Manu Soman © ${ data.current_year }` })
+        .catch(err => {
+            copyright.innerHTML = `Manu Soman © ${ new Date().getFullYear() }`;
+            console.error(err);
+        });
+    })();
+</script>
+</body>
+</html> 

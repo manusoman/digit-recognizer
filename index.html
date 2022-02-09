@@ -7,7 +7,8 @@
     <link rel="shortcut icon" type="image/x-icon" href="res/favicon.svg" />
     <link rel="stylesheet" href="styles/index.css">
     <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&display=swap" rel="stylesheet"> 
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
+    <script type="text/javascript" src="src/math.js"></script>
 </head>
 <body>
 
@@ -17,7 +18,9 @@
     </div>
 </header>
 
-<main>
+<div id="loader">App is loading. Please wait...</div>
+
+<main id="main" class="off">
     <div class="main_frame">
         <div id="draw">
             <canvas id="canvas" width="200" height="200"></canvas>
@@ -33,6 +36,9 @@
         <span id="copyright"></span>
     </div>
 </footer>
+
+<script type="text/javascript" src="src/DrawCanvas.js"></script>
+<script type="text/javascript" src="src/app.js"></script>
 
 <script>
     (function() {

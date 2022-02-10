@@ -1,14 +1,15 @@
 (function() { 'use strict';
 
-const drawCanvas = new DrawCanvas(document.getElementById('canvas'));
+const drawCanvas = new DrawCanvas(document.getElementById('canvas'), run_network);
+let NeuralNet = null;
 
 
 fetch('https://manusoman.github.io/digit-recognizer/network_matrix.json')
 .then(data => data.json())
 .then(matrices => {
-    window.NeuralNet = new FFNetwork(matrices);
-    drawCanvas.updateCanvasPosition();
+    NeuralNet = new FFNetwork(matrices);
     removeLoader();
+    drawCanvas.updateCanvasPosition();
 })
 .catch(console.error);
 
@@ -16,6 +17,7 @@ fetch('https://manusoman.github.io/digit-recognizer/network_matrix.json')
 
 const LOADER = document.getElementById('loader'),
     MAIN = document.getElementById('main'),
+    RESULT = document.getElementById('result'),
     CLEAR_BUTTON = document.getElementById('clear');
 
 
@@ -50,6 +52,31 @@ FFNetwork.prototype = {
 };
 
 
+
+function run_network(imgData) {
+    const res = NeuralNet.applyInput(imgData),
+        val = getLNindex(res);
+
+    RESULT.innerHTML = val;
+    RESULT.classList.remove('off');
+    console.log('answer: ', val);
+}
+
+
+function getLNindex(a) {
+    const l = a.length;
+    let index = 0,
+        n = a[0];
+
+    for(let i = 1; i < l; i++) {
+        if(a[i] > n) {
+            n = a[i];
+            index = i;
+        }
+    }
+
+    return index;
+}
     
 function removeLoader() {
     LOADER.classList.add('off');
@@ -60,6 +87,7 @@ CLEAR_BUTTON.addEventListener('click', function(e) {
     e.preventDefault();
     e.stopPropagation();
     
+    RESULT.classList.add('off');
     drawCanvas.clear();
 }, true);
 

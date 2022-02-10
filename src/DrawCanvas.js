@@ -12,49 +12,21 @@ const smallCanvas = (function() {
     return { canvas, ctx, clear };
 })();
 
-function DrawCanvas(canvas) {
+function DrawCanvas(canvas, cb) {
     this.canvas = canvas;
+    this.cb = cb;
     this.context = canvas.getContext('2d');
     this.isDrawing = false;
 
     this.context.lineWidth = 15.0;
     this.context.lineCap = 'round';
     this.context.lineJoin = 'round';
-    this.attachEvents();
+
+    attachEvents(this);
 };
 
 DrawCanvas.prototype = {
     constructor : DrawCanvas,
-
-    attachEvents : function() {
-        const _this = this;
-
-
-        this.canvas.addEventListener('mousedown', function(e) {
-            start(e, _this);
-        }, true);
-    
-        this.canvas.addEventListener('mousemove', function(e) {
-            move(e, _this);
-        }, true);
-    
-        this.canvas.addEventListener('mouseup', function(e) {
-            end(e, _this);
-        }, true);
-
-
-        this.canvas.addEventListener('touchstart', function(e) {
-            start(e, _this);
-        }, true);
-    
-        this.canvas.addEventListener('touchmove', function(e) {
-            move(e, _this);
-        }, true);
-    
-        this.canvas.addEventListener('touchend', function(e) {
-            end(e, _this);
-        }, true);
-    },
 
     clear : function() {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -62,8 +34,9 @@ DrawCanvas.prototype = {
     },
 
     updateCanvasPosition : function() {
-        this.offsetLeft = this.canvas.offsetLeft;
-        this.offsetTop = this.canvas.offsetTop;
+        const parent = this.canvas.offsetParent;
+        this.offsetLeft = parent.offsetLeft;
+        this.offsetTop = parent.offsetTop;
     },
 
     getPenPosition : function(e) {
@@ -89,15 +62,43 @@ DrawCanvas.prototype = {
 
         const { data } = smallCanvas.ctx.getImageData(0, 0, 25, 25),
             l = data.length,
-            tmp = [];
+            res = [];
 
         for(let i = 3; i < l; i += 4) {
-            tmp.push(data[i] / 255); // /255 is for normalizing
+            res.push(data[i] / 255); // /255 is for normalizing
         }
         
-        return tmp;
+        return res;
     }
 };
+
+
+function attachEvents(_this) {
+    _this.canvas.addEventListener('mousedown', function(e) {
+        start(e, _this);
+    }, true);
+
+    _this.canvas.addEventListener('mousemove', function(e) {
+        move(e, _this);
+    }, true);
+
+    _this.canvas.addEventListener('mouseup', function(e) {
+        end(e, _this);
+    }, true);
+
+
+    _this.canvas.addEventListener('touchstart', function(e) {
+        start(e, _this);
+    }, true);
+
+    _this.canvas.addEventListener('touchmove', function(e) {
+        move(e, _this);
+    }, true);
+
+    _this.canvas.addEventListener('touchend', function(e) {
+        end(e, _this);
+    }, true);
+}
 
 
 function start(e, _this) {
@@ -126,28 +127,10 @@ function end(e, _this) {
     e.stopPropagation();
 
     _this.isDrawing = false;
-    let r = NeuralNet.applyInput(_this.getImageData()),
-        v = getLNindex(r);
-
-    console.log('answer: ', v);
+    _this.cb(_this.getImageData());
 }
 
 
-function getLNindex(a) {
-    let n = a[0],
-        index = 0;
-
-    for(let i = 1, l = a.length; i < l; i++) {
-        if(a[i] > n) {
-            n = a[i];
-            index = i;
-        }
-    }
-
-    return index;
-}
-
-document.body.appendChild(smallCanvas.canvas);
 window.DrawCanvas = DrawCanvas;
 
 })();

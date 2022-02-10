@@ -88,6 +88,7 @@ CLEAR_BUTTON.addEventListener('click', function(e) {
     e.stopPropagation();
     
     RESULT.classList.add('off');
+    RESULT.innerHTML = '_';
     drawCanvas.clear();
 }, true);
 
